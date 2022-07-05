@@ -8,7 +8,11 @@ uniform sampler2D uNoiseMap;
 uniform float uProgress;
 uniform float uPetalDistance;
 uniform vec3 uPetalColor;
+uniform int uPetalCount;
 uniform float uNoiseFactor;
+uniform float uRand;
+uniform float uTime;
+
 varying vec2 vUv;
 
 float smin( float a, float b, float k ) {
@@ -27,7 +31,9 @@ void main() {
     // vec3 col = vec3(0.937,0.922,0.925);
     vec4 col = vec4(0.);
     // noise
-    float uvNoise = texture2D(uNoiseMap, vUv.xy ).x * 0.02104 * uNoiseFactor;
+    float uvNoise = texture2D(uNoiseMap, vUv.xy / 5. + vec2(uRand)  ).x * 0.09104 * uNoiseFactor;
+    // float uvNoise = texture2D(uNoiseMap, vUv.xy / 5. + vec2(uTime / 45.) ).x * 0.12104 * uNoiseFactor;
+
     vec2 uv = vUv.xy;
 
     float globalProgress = uProgress; // 0 - 1;
@@ -41,18 +47,17 @@ void main() {
     // petals
     float petalBigRadius = 0.12;
     float petalBigDistance = 0.2;
-    int petalCount = 5;
 
-    for(int petalIndex = 0; petalIndex < petalCount; petalIndex++){
-        float petalAngle = startingAngle +  PI2/float(petalCount) * float(petalIndex);
+    for(int petalIndex = 0; petalIndex < uPetalCount; petalIndex++){
+        float petalAngle = startingAngle +  PI2/float(uPetalCount) * float(petalIndex);
         float petalRadius = (petalBigRadius + uvNoise * 0.64591) * globalProgress;
-        vec2 petalPosition = vec2(cos(petalAngle),sin(petalAngle)) * petalBigDistance * uPetalDistance + centerPosition;
+        vec2 petalPosition = vec2(cos(petalAngle),sin(petalAngle)) * petalBigDistance * uPetalDistance * sqrt((float(uPetalCount) / 5. )) + centerPosition ;
         sdf = smin(sdf,sdCircle(uv, petalPosition, petalRadius ),0.04582);
     }
 
     if(sdf < 0.){
         // col = vec4(0.992,0.639,0.29,1.);
-        col = vec4(uPetalColor,1.);
+        col = vec4(uPetalColor,1. - smoothstep(-0.002,.0,sdf));
     }
 
     // center  

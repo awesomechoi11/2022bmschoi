@@ -21,11 +21,15 @@ void main() {
 const easeingFunc = bezier(0.25, 0.59, 0.09, 1);
 
 export default function Flower({
+    lifeDuration,
     stage,
     rotationSpeedFactor,
     scaleFactor,
     position,
     petalColor,
+    expire = true,
+    petalCount = 5,
+    flowerId,
 }) {
     const material = useRef();
     const noiseTexture = useTexture("/noise.png");
@@ -61,8 +65,12 @@ export default function Flower({
         uProgress: { value: uGlobalScale.get() },
         uPetalDistance: { value: uPetalDistance.get() },
         uNoiseFactor: { value: uNoiseFactor.get() },
+        uPetalCount: { value: petalCount },
         uPetalColor: { value: petalColor },
+        uRand: { value: Math.random() },
+        uTime: { value: 0 },
     });
+
     useFrame(({ clock }) => {
         ref.current.rotateZ(uRotationVelocity.get() * -rotationSpeedFactor);
 
@@ -70,19 +78,34 @@ export default function Flower({
             noiseTexture.wrapS = THREE.RepeatWrapping;
             noiseTexture.wrapT = THREE.RepeatWrapping;
         }
-
+        uniforms.current.uPetalCount.value = petalCount;
         uniforms.current.uNoiseMap.value = noiseTexture;
         uniforms.current.uProgress.value = uGlobalScale.get();
         uniforms.current.uPetalDistance.value = uPetalDistance.get();
         uniforms.current.uPetalColor.value = petalColor;
         uniforms.current.uNoiseFactor.value = uNoiseFactor.get();
-
+        uniforms.current.uTime.value = clock.getElapsedTime();
+        // console.log(clock);
         material.current.needsUpdate = true;
     });
 
     useEffect(() => {
         progress.set(stage);
     }, [stage]);
+    const { removeFlower } = useFlowerControls();
+    useEffect(() => {
+        if (!expire) return;
+
+        let timeoutId = setTimeout(() => {
+            progress.set(2);
+            setTimeout(() => {
+                removeFlower(flowerId);
+            }, 1000);
+        }, lifeDuration);
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [expire]);
 
     return (
         <mesh ref={ref} position={position}>

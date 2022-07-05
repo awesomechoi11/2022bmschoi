@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap");
 body,
 html,
 #root,
@@ -7,4 +8,20 @@ html,
     height: 100%;
     margin: 0;
     padding: 0;
+    background-color: #efebec;
+    font-family: "Montserrat", sans-serif;
+    overflow: hidden;
+}
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.scroll-area {
+    overflow: auto;
+    height: 100%;
+    background-color: #0000;
+    position: relative;
+    z-index: 2;
 }
