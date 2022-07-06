@@ -118,7 +118,7 @@ export default function Flower({
                 vertexShader={vertexShader}
                 fragmentShader={fragmentShader}
                 transparent={true}
-                depthTest={false}
+                // depthTest={false}
             ></shaderMaterial>
         </mesh>
     );

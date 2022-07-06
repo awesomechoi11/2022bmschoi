@@ -15,6 +15,7 @@ import { currentScrollPosAtom, mouseAtom } from "../state";
 import DesktopText from "./fiberTexts/DesktopText";
 import Flower from "./Flower/Flower";
 import useFlowerControls from "./Flower/useFlowerControls";
+import ThreeImage from "./Image/ThreeImage";
 
 var pos = new THREE.Vector3(); // create once and reuse
 var vec = new THREE.Vector3(); // create once and reuse
@@ -122,7 +123,8 @@ export default function Fiber() {
                             shadow-mapSize-width={1024}
                             shadow-mapSize-height={1024}
                         />
-                        <DesktopText />
+                        <DesktopText position={[0, 0, 0]} />
+
                         {flowerList.map((props) => (
                             <Flower key={props.flowerId} {...props} />
                         ))}
